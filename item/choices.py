@@ -8,6 +8,27 @@ SEAT_CHOICES = [
     (5, 5),
 ]
 
+TRANSMISSION_CHOICES = [
+    ('Механика', 'Механика'),
+    ('Автомат', 'Автомат'),
+    ('Электрический', 'Электрический'),
+    ('Вариатор', 'Вариатор'),
+    ('Робот', 'Робот')
+]
+
+DRIVE_TYPE_CHOICES = [
+    ('Передний', 'Передний'),
+    ('Задний', 'Задний'),
+    ('Полный', 'Полный')
+]
+
+RENT_STATUS_CHOICES = [
+        ('pending', 'Ожидает'),
+        ('active', 'Активна'),
+        ('completed', 'Завершена'),
+        ('cancelled', 'Отменена'),
+    ]
+
 def year_choices():
     return [(r,r) for r in range(1984, datetime.date.today().year+1)]
 

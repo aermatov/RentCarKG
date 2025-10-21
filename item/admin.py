@@ -1,67 +1,104 @@
 from django.contrib import admin
-from django.utils.html import format_html
-from .models import CarMark, CarModel, CarBody, FuelType, Car, CarImage, Rent
+from . import models
 
 
-@admin.register(CarMark)
+@admin.register(models.CarMark)
 class CarMarkAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name')
-    search_fields = ('name',)
+    list_display = ['id', 'name']
+    search_fields = ['name']
 
 
-@admin.register(CarModel)
-class CarModelAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name')
-    search_fields = ('name',)
-
-
-@admin.register(CarBody)
+@admin.register(models.CarBody)
 class CarBodyAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name')
-    search_fields = ('name',)
+    list_display = ['id', 'name']
+    search_fields = ['name']
 
 
-@admin.register(FuelType)
+@admin.register(models.CarModel)
+class CarModelAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'mark']
+    list_filter = ['mark']
+    search_fields = ['name', 'mark__name']
+
+
+@admin.register(models.FuelType)
 class FuelTypeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name')
-    search_fields = ('name',)
+    list_display = ['id', 'name']
+    search_fields = ['name']
+
+
+@admin.register(models.CarColor)
+class CarColorAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name']
+    search_fields = ['name']
 
 
 class CarImageInline(admin.TabularInline):
-    model = CarImage
-    extra = 1  # сколько пустых строк для загрузки отображать
-    fields = ('image', 'image_preview')
-    readonly_fields = ('image_preview',)
-
-    def image_preview(self, obj):
-        if obj.image:
-            return format_html('<img src="{}" width="100" height="70" style="object-fit:cover; border-radius:4px;" />', obj.image.url)
-        return "-"
-    image_preview.short_description = "Превью"
+    model = models.CarImage
+    extra = 1
+    fields = ['image', 'order']
 
 
-@admin.register(Car)
+@admin.register(models.Car)
 class CarAdmin(admin.ModelAdmin):
-    list_display = ('id', 'mark', 'model', 'year', 'horse_power', 'seat', 'body', 'mileage', 'preview_thumbnail')
-    list_filter = ('mark', 'body', 'year')
-    search_fields = ('mark__name', 'model__name')
+    list_display = [
+        'id', 'mark', 'model', 'year', 'price_per_day',
+        'transmission', 'is_available', 'created_at'
+    ]
+    list_filter = [
+        'mark', 'model', 'body', 'fuel_type',
+        'transmission', 'drive_type', 'is_available'
+    ]
+    search_fields = ['mark__name', 'model__name', 'color']
+    readonly_fields = ['created_at', 'updated_at']
     inlines = [CarImageInline]
 
-    def preview_thumbnail(self, obj):
-        if obj.preview_img:
-            return format_html('<img src="{}" width="80" height="60" style="object-fit:cover; border-radius:4px;" />', obj.preview_img.url)
-        return "-"
-    preview_thumbnail.short_description = "Превью"
+    fieldsets = (
+        ('Основная информация', {
+            'fields': ('mark', 'model', 'year', 'body', 'fuel_type')
+        }),
+        ('Технические характеристики', {
+            'fields': ('horse_power', 'engine_volume', 'transmission',
+                       'drive_type', 'seat', 'mileage')
+        }),
+        ('Внешний вид', {
+            'fields': ('color', 'preview_img')
+        }),
+        ('Аренда', {
+            'fields': ('price_per_day', 'is_available', 'description')
+        }),
+        ('Системная информация', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
 
 
-@admin.register(Rent)
+@admin.register(models.CarImage)
+class CarImageAdmin(admin.ModelAdmin):
+    list_display = ['id', 'car', 'order']
+    list_filter = ['car']
+
+
+@admin.register(models.Rent)
 class RentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'car', 'rent_start', 'rent_end', 'duration_days')
-    list_filter = ('rent_start', 'rent_end', 'car__mark')
-    search_fields = ('car__mark__name', 'car__model__name')
+    list_display = [
+        'id', 'car', 'rent_start', 'rent_end',
+        'status', 'total_price', 'created_at'
+    ]
+    list_filter = ['status', 'rent_start', 'rent_end']
+    search_fields = ['car__mark__name', 'car__model__name']
+    readonly_fields = ['total_price', 'created_at']
 
-    def duration_days(self, obj):
-        if obj.rent_start and obj.rent_end:
-            return (obj.rent_end - obj.rent_start).days
-        return "-"
-    duration_days.short_description = "Длительность (дн.)"
+    fieldsets = (
+        ('Аренда', {
+            'fields': ('car', 'rent_start', 'rent_end', 'status')
+        }),
+        ('Финансы', {
+            'fields': ('total_price',)
+        }),
+        ('Системная информация', {
+            'fields': ('created_at',),
+            'classes': ('collapse',)
+        }),
+    )
