@@ -48,7 +48,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',   # ← must come right after SecurityMiddleware
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -172,14 +172,14 @@ SWAGGER_SETTINGS = {
     ],
 }
 
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "http://localhost:3002",
-    "http://localhost:3003",
-    "https://rentcarkg.onrender.com",
-]
+#
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",
+#     "http://localhost:3001",
+#     "http://localhost:3002",
+#     "http://localhost:3003",
+#     "https://rentcarkg.onrender.com",
+# ]
 CSRF_TRUSTED_ORIGINS = [
     "https://rentcarkg.onrender.com",
 ]
