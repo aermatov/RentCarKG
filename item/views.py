@@ -10,11 +10,13 @@ from . import models, serializers, filters
 class CarMarkListAPIView(generics.ListAPIView):
     queryset = models.CarMark.objects.all()
     serializer_class = serializers.CarMarkSerializer
+    pagination_class = None
 
 
 class CarBodyListAPIView(generics.ListAPIView):
     queryset = models.CarBody.objects.all()
     serializer_class = serializers.CarBodySerializer
+    pagination_class = None
 
 
 class CarModelListAPIView(generics.ListAPIView):
@@ -22,6 +24,7 @@ class CarModelListAPIView(generics.ListAPIView):
     serializer_class = serializers.CarModelSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['mark']
+    pagination_class = None
 
 
 class FuelTypeListAPIView(generics.ListAPIView):
@@ -41,6 +44,7 @@ class CarListAPIView(generics.ListAPIView):
     filterset_class = filters.CarFilter
     ordering_fields = ['price_per_day', 'year', 'mileage', 'created_at']
     ordering = ['-created_at']
+    pagination_class = None
 
 
 class CarDetailAPIView(generics.RetrieveAPIView):
@@ -104,6 +108,7 @@ class RentListAPIView(generics.ListAPIView):
     filterset_class = filters.RentFilter
     ordering_fields = ['rent_start', 'rent_end', 'created_at']
     ordering = ['-created_at']
+    pagination_class = None
 
 
 class RentDetailAPIView(generics.RetrieveAPIView):
